@@ -1,0 +1,34 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: order-service-pod-kill
+  namespace: bitvelocity
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - bitvelocity
+    labelSelectors:
+      app: order-service
+  scheduler:
+    cron: '@every 2m'
+  duration: '30s'
+---
+# Experiment Details:
+# - Kills one random order-service pod every 2 minutes
+# - Each disruption lasts 30 seconds (pod restart time)
+# - Tests: Pod restart resilience, service discovery, load balancing
+# 
+# Expected Behavior:
+# - K8s should restart pod automatically
+# - Traffic should route to healthy pods
+# - Client requests should retry or circuit break
+# 
+# Validation:
+# - Check Prometheus: order_service_availability
+# - Check Grafana: Pod restart dashboard
+# - Check Jaeger: Trace error rates
+# 
+# To pause: kubectl annotate podchaos order-service-pod-kill experiment.chaos-mesh.org/pause=true
+# To resume: kubectl annotate podchaos order-service-pod-kill experiment.chaos-mesh.org/pause-

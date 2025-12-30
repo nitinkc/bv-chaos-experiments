@@ -1,0 +1,38 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: redis-memory-stress
+  namespace: bitvelocity
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - bitvelocity
+    labelSelectors:
+      app: redis
+  stressors:
+    memory:
+      workers: 4
+      size: '256MB'
+  duration: '3m'
+---
+# Experiment Details:
+# - Adds 256MB memory pressure to one Redis pod
+# - Duration: 3 minutes
+# - Tests: Cache eviction behavior, fallback to database, connection pool handling
+# 
+# Expected Behavior:
+# - Redis may start evicting keys (LRU policy)
+# - Services should handle cache misses gracefully
+# - Database load should increase temporarily
+# - No cascading failures
+# 
+# Validation:
+# - Check Redis metrics: memory_usage, evicted_keys
+# - Check application metrics: cache_miss_ratio
+# - Check database: connection pool utilization, query latency
+# 
+# Learning Goals:
+# - Understand cache eviction behavior
+# - Validate cache-aside pattern implementation
+# - Test degraded performance handling

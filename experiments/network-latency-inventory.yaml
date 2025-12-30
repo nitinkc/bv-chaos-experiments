@@ -1,0 +1,48 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: inventory-network-latency
+  namespace: bitvelocity
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - bitvelocity
+    labelSelectors:
+      app: inventory-service
+  delay:
+    latency: '200ms'
+    correlation: '50'
+    jitter: '50ms'
+  duration: '5m'
+  direction: to
+  target:
+    selector:
+      namespaces:
+        - bitvelocity
+      labelSelectors:
+        app: order-service
+    mode: all
+---
+# Experiment Details:
+# - Adds 200ms ±50ms network latency between order-service → inventory-service
+# - Duration: 5 minutes
+# - Affects all pods (both services)
+# - Tests: gRPC timeout handling, circuit breaker activation, retry policies
+# 
+# Expected Behavior:
+# - gRPC calls should complete but slower
+# - Circuit breaker should activate if latency exceeds threshold
+# - Fallback logic should trigger (if implemented)
+# - Timeouts should be respected
+# 
+# Validation:
+# - Check Prometheus: grpc_client_duration_seconds{service="inventory"}
+# - Check Grafana: Circuit breaker state dashboard
+# - Check logs: Retry attempts and timeout messages
+# 
+# Learning Goals:
+# - Understand distributed system latency impact
+# - Validate timeout configuration
+# - Test circuit breaker thresholds
