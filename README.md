@@ -112,10 +112,10 @@ Chaos experiments can run automatically in staging:
 - Pre-release resilience validation
 - Regression testing for resilience patterns
 
-See `.github/workflows/chaos-nightly.yml`
+> **Note**: Automated chaos workflows will be added in `.github/workflows/` as the platform matures.
 
 ## Learning Resources
 
 - [Chaos Mesh Documentation](https://chaos-mesh.org/docs/)
 - [Principles of Chaos Engineering](https://principlesofchaos.org/)
-- [Game Day Best Practices](game-days/best-practices.md)
+- [Game Day Runbook Example](game-days/runbook-inventory-failure.md)
